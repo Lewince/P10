@@ -1,2 +1,7 @@
+botbuilder-ai
+botbuilder-applicationinsights
+botbuilder-schema
+botbuilder-core
 botbuilder-integration-aiohttp>=4.14.0
 botbuilder-dialogs
+aiohttp

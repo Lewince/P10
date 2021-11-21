@@ -80,12 +80,14 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=201)
 
-
-APP = web.Application(middlewares=[aiohttp_error_middleware])
-APP.router.add_post("/api/messages", messages)
+def init_func(argv):
+    APP = web.Application(middlewares=[aiohttp_error_middleware])
+    APP.router.add_post("/api/messages", messages)
+    return APP
 
 if __name__ == "__main__":
+    APP = init_func(None)
     try:
-        web.run_app(APP, host="localhost", port=CONFIG.PORT)
+        web.run_app(APP, host="0.0.0.0", port=CONFIG.PORT)
     except Exception as error:
         raise error

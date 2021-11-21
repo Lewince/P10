@@ -19,7 +19,11 @@ from botbuilder.schema import Activity, ActivityTypes
 from botmodule import DialogBot
 from config import DefaultConfig
 import asyncio
-
+from botbuilder.applicationinsights import ApplicationInsightsTelemetryClient
+from botbuilder.integration.applicationinsights.aiohttp import (
+    AiohttpTelemetryProcessor,
+    bot_telemetry_middleware
+)
 CONFIG = DefaultConfig()
 CONMEMORY = ConversationState(MemoryStorage())
 
@@ -28,7 +32,10 @@ CONMEMORY = ConversationState(MemoryStorage())
 SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
 ADAPTER = BotFrameworkAdapter(SETTINGS)
 
-# loop = asyncio.get_event_loop()
+INSTRUMENTATION_KEY = CONFIG.APPINSIGHTS_INSTRUMENTATION_KEY
+TELEMETRY_CLIENT = ApplicationInsightsTelemetryClient(
+    INSTRUMENTATION_KEY, telemetry_processor=AiohttpTelemetryProcessor(), client_queue_size=10
+)
 
 # # Catch-all for errors.
 async def on_error(context: TurnContext, error: Exception):
@@ -57,11 +64,10 @@ async def on_error(context: TurnContext, error: Exception):
         # Send a trace activity, which will be displayed in Bot Framework Emulator
         await context.send_activity(trace_activity)
 
-
 ADAPTER.on_turn_error = on_error
 
 # Create the Bot
-BOT = DialogBot(CONMEMORY)
+BOT = DialogBot(CONMEMORY, TELEMETRY_CLIENT)
 
 
 # Listen for incoming requests on /api/messages
@@ -80,14 +86,12 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=201)
 
-def init_func(argv):
-    APP = web.Application(middlewares=[aiohttp_error_middleware])
-    APP.router.add_post("/api/messages", messages)
-    return APP
+
+APP = web.Application(middlewares=[bot_telemetry_middleware, aiohttp_error_middleware])
+APP.router.add_post("/api/messages", messages)
 
 if __name__ == "__main__":
-    APP = init_func(None)
     try:
-        web.run_app(APP, host="0.0.0.0", port=CONFIG.PORT)
+        web.run_app(APP, host="localhost", port=CONFIG.PORT)
     except Exception as error:
         raise error

@@ -4,6 +4,7 @@ botbuilder-azure
 botbuilder-schema
 botbuilder-core
 botbuilder-integration-aiohttp>=4.14.0
+botbuilder-integration-applicationinsights-aiohttp
 botbuilder-dialogs
 botframework-connector
 aiohttp

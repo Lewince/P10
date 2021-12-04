@@ -1,3 +1,7 @@
+botbuilder-integration-aiohttp>=4.14.0
+botbuilder-dialogs
+opencensus
+opencensus-ext-azure
 botbuilder-ai
 botbuilder-applicationinsights
 botbuilder-azure
@@ -10,4 +14,3 @@ botframework-connector
 aiohttp
 msrest==0.6.10
 datatypes-date-time>=1.0.0.a1
-requests

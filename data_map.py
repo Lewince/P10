@@ -1,17 +1,18 @@
 from enum import Enum
 
 class EnumUser(Enum):
-    ORIG = 1
-    DEST = 2
-    DEPDATE = 3
-    RETDATE = 4
-    BUDGET = 5
-    DONE = 6
+    LUIS = 1
+    ORIG = 2
+    DEST = 3
+    DEPDATE = 4
+    RETDATE = 5
+    BUDGET = 6
+    DONE = 7
 
 
 class ConState:
     def __init__(self):
-        self.profile = EnumUser.ORIG
+        self.profile = EnumUser.LUIS
     @property
     def CurrentPos(self):
         return self.profile

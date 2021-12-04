@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from typing import Text
-from botbuilder.core import ActivityHandler, TurnContext, ConversationState, MessageFactory, BotTelemetryClient, NullTelemetryClient
+from botbuilder.core import ActivityHandler, TurnContext, ConversationState, MessageFactory
 from botbuilder.schema import ChannelAccount
 from botbuilder.dialogs import DialogSet, WaterfallDialog, WaterfallStepContext
 from botbuilder.dialogs.prompts import TextPrompt, NumberPrompt, DateTimePrompt, PromptOptions
@@ -10,7 +10,7 @@ from data_map import ConState, UserProfile, EnumUser
 
 class DialogBot(ActivityHandler):
     
-    def __init__(self, constate:ConversationState, telemetry_client: BotTelemetryClient): 
+    def __init__(self, constate:ConversationState): 
         self.constate = constate
         self.state_prop = self.constate.create_property("dialog_set")
         self.dialog_set = DialogSet(self.state_prop)
@@ -18,36 +18,23 @@ class DialogBot(ActivityHandler):
         self.dialog_set.add(NumberPrompt("number_prompt"))
         self.dialog_set.add(DateTimePrompt("datetime_prompt"))
         self.dialog_set.add(WaterfallDialog("main_dialog", [self.GetOrigin, self.GetDestination, self.GetDepDate, self.GetRetDate, self.GetBudget, self.Completed]))
-        self.telemetry_client = telemetry_client
 
     async def GetOrigin(self, w_step:WaterfallStepContext):
-        return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.text("Please enter departure airport")))
+        return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter departure airport")))
 
     async def GetDestination(self, w_step:WaterfallStepContext):
-        w_step.values["origin"] = w_step._turn_context.activity.text
-        return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.text("Please enter destination airport")))
+        return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter destination airport")))
 
     async def GetDepDate(self, w_step:WaterfallStepContext):
-        w_step.values["destination"] = w_step._turn_context.activity.text
-        return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.text("Please enter desired departure date")))
+        return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter desired departure date")))
 
     async def GetRetDate(self, w_step:WaterfallStepContext):
-        w_step.values["departure_on"] = w_step._turn_context.activity.text
-        return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.text("Please enter desired return date")))
+        return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter desired return date")))
     
     async def GetBudget(self, w_step:WaterfallStepContext):
-        w_step.values["return_on"] = w_step._turn_context.activity.text
-        return await w_step.prompt("number_prompt", PromptOptions(prompt=MessageFactory.text("Please enter maximum budget in dollars")))
+        return await w_step.prompt("number_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter maximum budget in dollars")))
 
     async def Completed(self, w_step:WaterfallStepContext):
-        w_step.values["budget"] = w_step._turn_context.activity.text
-        recap = "It seems we have all the needed info, please check this summary : \n\n"\
-            + f" Origin : {w_step.values['origin']} \n\n "\
-            + f" Destination : {w_step.values['destination']} \n\n "\
-            + f" Departure on : {w_step.values['departure_on']} \n\n "\
-            + f" Return on : {w_step.values['return_on']} \n\n "\
-            + f" Maximum budget : {w_step.values['budget']} \n\n "
-        await w_step._turn_context.send_activity(recap)
         return await w_step.end_dialog()
 
     async def on_turn(self, turn_context:TurnContext):
@@ -57,23 +44,6 @@ class DialogBot(ActivityHandler):
         else:
             await dialog_context.begin_dialog("main_dialog")
         await self.constate.save_changes(turn_context)
-
-    @property
-    def telemetry_client(self) -> BotTelemetryClient:
-        """
-        Gets the telemetry client for logging events.
-        """
-        return self._telemetry_client
-
-    @telemetry_client.setter
-    def telemetry_client(self, value: BotTelemetryClient) -> None:
-        """
-        Sets the telemetry client for logging events.
-        """
-        if value is None:
-            self._telemetry_client = NullTelemetryClient()
-        else:
-            self._telemetry_client = value
 
     # async def on_members_added_activity(
     #     self,

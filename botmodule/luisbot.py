@@ -14,9 +14,9 @@ import os
 
 
 class LuisBot(ActivityHandler):
-    def __init__(self, luis_key):
+    def __init__(self, app_id, luis_key):
         self.luis_app = LuisApplication(
-            "f4fd0633-0834-4472-baca-c2f049d20d13",
+            app_id,
             luis_key,
             "https://westeurope.api.cognitive.microsoft.com/")
         luis_options = LuisPredictionOptions(include_all_intents=True, include_instance_data=True)
@@ -46,14 +46,14 @@ class LuisBot(ActivityHandler):
 
 
 class StatefulLuisBot(ActivityHandler):
-    def __init__(self, constate:ConversationState, userstate:UserState, appkey):
+    def __init__(self, constate:ConversationState, userstate:UserState, luis_app_id, luis_appkey):
         self.constate = constate
         self.userstate = userstate
         self.conprop = self.constate.create_property("constate")
         self.userprop = self.userstate.create_property("userstate")
         self.luis_app = LuisApplication(
-            "f4fd0633-0834-4472-baca-c2f049d20d13",
-            appkey,
+            luis_app_id,
+            luis_appkey,
             "https://westeurope.api.cognitive.microsoft.com/")
         luis_options = LuisPredictionOptions(include_all_intents=True, include_instance_data=True)
         self.luis_rec = LuisRecognizer(self.luis_app, luis_options, True)

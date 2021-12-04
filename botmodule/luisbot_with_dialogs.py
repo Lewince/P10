@@ -4,22 +4,17 @@
 from typing import Text
 from botbuilder.core import ActivityHandler, TurnContext, RecognizerResult, ConversationState, UserState
 from botbuilder.schema import ChannelAccount
-# from botbuilder.dialogs import DialogSet, WaterfallDialog, WaterfallStepContext
-# from botbuilder.dialogs.prompts import TextPrompt, NumberPrompt, DateTimePrompt, PromptOptions
 from data_map import ConState, UserProfile, EnumUser
 from botbuilder.ai.luis import LuisApplication, LuisPredictionOptions, LuisRecognizer
 from botbuilder.ai.luis.luis_util import LuisUtil
-import logging
-import os
-# from opencensus.ext.azure.log_exporter import AzureLogHandler
-# logger = logging.getLogger(__name__)
-# logger.addHandler(AzureLogHandler())
+
+
 
 class LuisBot(ActivityHandler):
-    def __init__(self, key):
+    def __init__(self, luis_appid, luis_key):
         self.luis_app = LuisApplication(
-            "86a517cb-0c11-4ea1-98bd-8ca7d917b5ad",
-            key,
+            luis_appid,
+            luis_key,
             "https://westeurope.api.cognitive.microsoft.com/")
         luis_options = LuisPredictionOptions(include_all_intents=True, include_instance_data=True)
         self.luis_rec = LuisRecognizer(self.luis_app, luis_options, True)
@@ -48,14 +43,14 @@ class LuisBot(ActivityHandler):
 
 
 class StatefulLuisBot(ActivityHandler):
-    def __init__(self, constate:ConversationState, userstate:UserState, appkey):
+    def __init__(self, constate:ConversationState, userstate:UserState, luis_appid, luis_appkey):
         self.constate = constate
         self.userstate = userstate
         self.conprop = self.constate.create_property("constate")
         self.userprop = self.userstate.create_property("userstate")
         self.luis_app = LuisApplication(
-            "86a517cb-0c11-4ea1-98bd-8ca7d917b5ad",
-            appkey,
+            luis_appid,
+            luis_appkey,
             "https://westeurope.api.cognitive.microsoft.com/")
         luis_options = LuisPredictionOptions(include_all_intents=True, include_instance_data=True)
         self.luis_rec = LuisRecognizer(self.luis_app, luis_options, True)
@@ -187,14 +182,6 @@ class StatefulLuisBot(ActivityHandler):
         if(conmode.profile == EnumUser.LUIS) and (usermode.orig !="" or usermode.dest !="" or usermode.depdate!="" or usermode.retdate!="" or usermode.budget!=""):
             
             print("entering LUIS conmode phase with booking info available")
-            # if result_dict['intents']['Communication_Confirm']['score'] >= 0.9:
-            #     await turn_context.send_activity("Thanks for confirming! We will now search for tickets matching your criteria")
-            # if result_dict['intents']['Utilities_Reject']['score'] >= 0.9:
-            #     await turn_context.send_activity("I'm sorry I could not understand your request properly - Can you please rephrase the incorrect part?")
-            # if result_dict['intents']['Utilities_Cancel']['score'] >= 0.9:
-            #     await turn_context.send_activity("Your search was cancelled - Thanks for using FlyMeBot")
-            # if result_dict['intents']['Utilities_StartOver']['score'] >= 0.9:
-            #     await turn_context.send_activity("OK let us start this discussion over : can you please give some details about the trip you wish to book?")
             if not (usermode.orig !="" and usermode.dest !="" and usermode.depdate!="" and usermode.retdate!="" and usermode.budget!=""):
                 loopmsg = f'I gathered following information so far : \n\nOrigin city : {usermode.orig if usermode.orig!="" else "missing"}' \
                     + f'\n\nDestination city : {usermode.dest if (usermode.dest!="") else "missing"}'\
@@ -243,9 +230,6 @@ class StatefulLuisBot(ActivityHandler):
                     + "\nOrigin city : " + usermode.orig + "\nDestination city : " + usermode.dest + "\nDeparture date : " + usermode.depdate + "\nReturn date : " + usermode.retdate + "\nAllowed budget in $ : " + usermode.budget
                 await turn_context.send_activity(info)
                 conmode.profile = EnumUser.LUIS
-        
-        
-        
 
     async def on_members_added_activity(
         self,
@@ -255,51 +239,3 @@ class StatefulLuisBot(ActivityHandler):
         for member_added in members_added:
             if member_added.id != turn_context.activity.recipient.id:
                 await turn_context.send_activity("Hello and welcome to FlyMeChat, my name is FlyMeBot and I am here to help you book your trip!\nPlease deliver some details on the trip you want to book")
-
-        
-
-# class DialogBot(ActivityHandler):
-    
-#     def __init__(self, constate:ConversationState): 
-#         self.constate = constate
-#         self.state_prop = self.constate.create_property("dialog_set")
-#         self.dialog_set = DialogSet(self.state_prop)
-#         self.dialog_set.add(TextPrompt("text_prompt"))
-#         self.dialog_set.add(NumberPrompt("number_prompt"))
-#         self.dialog_set.add(DateTimePrompt("datetime_prompt"))
-#         self.dialog_set.add(WaterfallDialog("main_dialog", [self.GetOrigin, self.GetDestination, self.GetDepDate, self.GetRetDate, self.GetBudget, self.Completed]))
-
-#     async def GetOrigin(self, w_step:WaterfallStepContext):
-#         return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter departure airport")))
-
-#     async def GetDestination(self, w_step:WaterfallStepContext):
-#         return await w_step.prompt("text_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter destination airport")))
-
-#     async def GetDepDate(self, w_step:WaterfallStepContext):
-#         return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter desired departure date")))
-
-#     async def GetRetDate(self, w_step:WaterfallStepContext):
-#         return await w_step.prompt("datetime_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter desired return date")))
-    
-#     async def GetBudget(self, w_step:WaterfallStepContext):
-#         return await w_step.prompt("number_prompt", PromptOptions(prompt=MessageFactory.Text("Please enter maximum budget in dollars")))
-
-#     async def Completed(self, w_step:WaterfallStepContext):
-#         return await w_step.end_dialog()
-
-#     async def on_turn(self, turn_context:TurnContext):
-#         dialog_context = await self.dialog_set.create_context(turn_context)
-#         if (dialog_context.active_dialog is not None):
-#             await dialog_context.continue_dialog()
-#         else:
-#             await dialog_context.begin_dialog("main_dialog")
-#         await self.constate.save_changes(turn_context)
-
-    # async def on_members_added_activity(
-    #     self,
-    #     members_added: ChannelAccount,
-    #     turn_context: TurnContext
-    # ):
-    #     for member_added in members_added:
-    #         if member_added.id != turn_context.activity.recipient.id:
-    #             await turn_context.send_activity("Hello and welcome!")

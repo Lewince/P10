@@ -12,7 +12,7 @@ from botbuilder.ai.luis.luis_util import LuisUtil
 import os
 
 class InsightLuisBot(ActivityHandler):
-    def __init__(self, constate:ConversationState, userstate:UserState,appid , appkey, logger):
+    def __init__(self, constate:ConversationState, userstate:UserState, appid, appkey, logger):
         self.constate = constate
         self.userstate = userstate
         self.conprop = self.constate.create_property("constate")

@@ -18,7 +18,6 @@ from botbuilder.schema import Activity, ActivityTypes
 from botmodule import StatefulLuisBot, InsightLuisBot
 from config import DefaultConfig
 import logging
-import os
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 # Bot components
 CONFIG = DefaultConfig()
@@ -93,7 +92,7 @@ if __name__ == "__main__":
     except Exception as error:
         raise error
 
-# Keeping below main execution code for local testing with Bot Framework Emulator 
+# # Keeping below main execution code for local testing with Bot Framework Emulator 
 
 # APP = web.Application(middlewares=[aiohttp_error_middleware])
 # APP.router.add_post("/api/messages", messages)

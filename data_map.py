@@ -1,6 +1,17 @@
 from enum import Enum
 
+
 class EnumUser(Enum):
+    LUIS = 1
+    ORIG = 2
+    DEST = 3
+    DEPDATE = 4
+    RETDATE = 5
+    BUDGET = 6
+    DONE = 7
+
+
+class EnumQuestion(Enum):
     LUIS = 1
     ORIG = 2
     DEST = 3
@@ -13,12 +24,21 @@ class EnumUser(Enum):
 class ConState:
     def __init__(self):
         self.profile = EnumUser.LUIS
+        self.qtoken = EnumQuestion.LUIS
+
     @property
     def CurrentPos(self):
         return self.profile
     @CurrentPos.setter
     def EnumUser(self, current:EnumUser):
         self.profile = current
+    
+    @property
+    def PreviousPos(self):
+        return self.qtoken
+    @PreviousPos.setter
+    def EnumQuestion(self, current:EnumQuestion):
+        self.qtoken = current
 
 
 class UserProfile:

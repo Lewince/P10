@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 import sys
 import traceback
 from datetime import datetime
@@ -15,10 +16,11 @@ from botbuilder.core import (
 )
 from botbuilder.core.integration import aiohttp_error_middleware
 from botbuilder.schema import Activity, ActivityTypes
-from botmodule import StatefulLuisBot, InsightLuisBot
+from botmodule import InsightLuisBot
 from config import DefaultConfig
 import logging
 from opencensus.ext.azure.log_exporter import AzureLogHandler
+
 # Bot components
 CONFIG = DefaultConfig()
 SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
@@ -81,6 +83,7 @@ async def messages(req: Request) -> Response:
 
 # Init function and main execution code for aiohttp deployment : 
 def init_func(argv):
+    os.system("python .tests/test_main_unit.py")
     APP = web.Application(middlewares=[aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
     return APP

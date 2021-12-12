@@ -15,3 +15,5 @@ aiohttp
 msrest==0.6.10
 datatypes-date-time>=1.0.0.a1
 dateparser
+aiounittest
+unittest

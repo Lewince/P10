@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from concurrent import futures
 from botbuilder.core import ActivityHandler, TurnContext, RecognizerResult, ConversationState, UserState
 from botbuilder.schema import ChannelAccount
 # from botbuilder.dialogs import DialogSet, WaterfallDialog, WaterfallStepContext

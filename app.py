@@ -84,7 +84,8 @@ async def messages(req: Request) -> Response:
 
 # Init function and main execution code for aiohttp deployment : 
 def init_func(argv):
-    os.system("python .tests/test_main_unit.py")
+    testpath = os.path.realpath("tests/test_main_unit.py")
+    os.system(f"python {testpath}")
     APP = web.Application(middlewares=[aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
     return APP

@@ -15,13 +15,14 @@ from botbuilder.core import (
 )
 from botbuilder.core.integration import aiohttp_error_middleware
 from botbuilder.schema import Activity, ActivityTypes
-from botmodule import InsightLuisBot
+from botmodule import InsightLuisBot_v2
 from config import DefaultConfig
 import logging
-import jinja2
-import aiohttp_jinja2
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 import os
+from botbuilder.integration.applicationinsights.aiohttp import aiohttp_telemetry_middleware
+# import jinja2
+# import aiohttp_jinja2
 # Bot components
 CONFIG = DefaultConfig()
 SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
@@ -65,7 +66,7 @@ async def on_error(context: TurnContext, error: Exception):
 
 ADAPTER.on_turn_error = on_error
 # Create the bot
-BOT = InsightLuisBot(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, logger)
+BOT = InsightLuisBot_v2(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, logger, verbose=True)
 
 # Listen for incoming requests on /api/messages
 async def messages(req: Request) -> Response:
@@ -81,27 +82,10 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=201)
 
-# @routes.get('/{username}')
-# async def web_chat(request: web.Request) -> web.Response:
-#     context = {
-#         'username': request.match_info.get("username", ""),
-#         'current_date': 'January 27, 2017'
-#     }
-#     response = aiohttp_jinja2.render_template("example.html", request,
-#                                           context=context)
-
-#     return response
-#     pass
-#     return Response(status=201)
-
-# Init function and main execution code for aiohttp deployment : 
 def init_func(argv):
+    os.system("python tests/test_main_unit.py")
     APP = web.Application(middlewares=[aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
-#     APP.router.add_route("/webchat", web_chat)
-#     aiohttp_jinja2.setup(
-#     APP, loader=jinja2.FileSystemLoader(os.path.join(os.getcwd(), "templates"))
-# )
     return APP
 
 if __name__ == "__main__":

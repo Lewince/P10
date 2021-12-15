@@ -1,26 +1,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
-import os
 import sys
 import traceback
 from datetime import datetime
 from aiohttp import web
 from aiohttp.web import Request, Response, json_response
 from botbuilder.core import (
-    BotFrameworkAdapterSettings,
-    TurnContext,
     BotFrameworkAdapter,
+    BotFrameworkAdapterSettings,
     ConversationState,
+    MemoryStorage, 
+    TurnContext,
     UserState,
-    MemoryStorage
 )
 from botbuilder.core.integration import aiohttp_error_middleware
 from botbuilder.schema import Activity, ActivityTypes
-from botmodule import InsightLuisBot
+from botmodule import InsightLuisBot_v2
 from config import DefaultConfig
 import logging
 from opencensus.ext.azure.log_exporter import AzureLogHandler
+import os
+
 
 # Bot components
 CONFIG = DefaultConfig()
@@ -66,7 +66,7 @@ async def on_error(context: TurnContext, error: Exception):
 
 ADAPTER.on_turn_error = on_error
 # Create the bot
-BOT = InsightLuisBot(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, logger)
+BOT = InsightLuisBot_v2(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, logger, verbose=True)
 
 # Listen for incoming requests on /api/messages
 async def messages(req: Request) -> Response:
@@ -82,10 +82,8 @@ async def messages(req: Request) -> Response:
         return json_response(data=response.body, status=response.status)
     return Response(status=201)
 
-# Init function and main execution code for aiohttp deployment : 
 def init_func(argv):
-    testpath = os.path.realpath("tests/test_main_unit.py")
-    os.system(f"python {testpath}")
+    os.system("python tests/test_main_unit.py")
     APP = web.Application(middlewares=[aiohttp_error_middleware])
     APP.router.add_post("/api/messages", messages)
     return APP

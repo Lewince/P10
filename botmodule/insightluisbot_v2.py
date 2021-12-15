@@ -15,7 +15,7 @@ from botbuilder.ai.luis.luis_util import LuisUtil
 
 
 
-class InsightLuisBot(ActivityHandler):
+class InsightLuisBot_v2(ActivityHandler):
     def __init__(self, constate:ConversationState, userstate:UserState, appid, appkey, logger, verbose=False):
         self.constate = constate
         self.userstate = userstate

@@ -15,9 +15,10 @@ from botbuilder.core import (
 )
 from botbuilder.core.integration import aiohttp_error_middleware
 from botbuilder.schema import Activity, ActivityTypes
-from botmodule import InsightLuisBot_v2
+from botmodule import InsightLuisBot_v3
 from config import DefaultConfig
 import logging
+from opencensus.ext.azure import metrics_exporter
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 import os
 
@@ -29,13 +30,15 @@ ADAPTER = BotFrameworkAdapter(SETTINGS)
 memstore = MemoryStorage()
 constate = ConversationState(memstore)
 userstate = UserState(memstore)
+
 # AppInsights Logger 
 name = __name__
 logger = logging.getLogger(name)
 logger.addHandler(AzureLogHandler(
         connection_string=CONFIG.INSIGHTS_CSTRING)
         )
-
+exporter = metrics_exporter.new_metrics_exporter(
+    connection_string=CONFIG.INSIGHTS_CSTRING)
 # Error catcher
 async def on_error(context: TurnContext, error: Exception):
     # This check writes out errors to console log .vs. app insights.
@@ -66,7 +69,7 @@ async def on_error(context: TurnContext, error: Exception):
 
 ADAPTER.on_turn_error = on_error
 # Create the bot
-BOT = InsightLuisBot_v2(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, logger, verbose=True)
+BOT = InsightLuisBot_v3(constate, userstate, CONFIG.LUIS_APP_ID, CONFIG.LUIS_KEY, exporter, logger, verbose=True)
 
 # Listen for incoming requests on /api/messages
 async def messages(req: Request) -> Response:

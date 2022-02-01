@@ -8,5 +8,5 @@ Projet 10 : développement d'un chatbot pour réservation de voyage
 
 
 Résumé dans la présentation ppt<br>
-Le dossier Modèle contient une EDA des données d'entraînement issues du Dataset Frames et 2 notebooks d'entraînement(remote) et d'évaluation - la V2 score les intents et les entités
+Le dossier Modèle contient une EDA des données d'entraînement issues du Dataset Frames et 2 notebooks d'entraînement(remote) et d'évaluation - la V2 permet de créer un modèle plus élaboré avec une évaluation plus détaillée. 
 

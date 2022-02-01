@@ -3,6 +3,7 @@ Projet 10 : développement d'un chatbot pour réservation de voyage
 - minimaliste - 5 paramètres : date/lieu de origine/destination, prix
 - basé sur les librairies python du BotFramework v4 de ms Azure
 - Modèle de compréhension de langage clé-en-main fourni par le service cognitif LUIS (Azure)
+- Servi par appli aiohttp
 
 
 Résumé dans la présentation ppt<br>

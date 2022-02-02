@@ -4,7 +4,7 @@
 - Basé sur les librairies python du BotFramework v4 de ms Azure et servi à l'aide du framework aiohttp
 - Le dossier Models contient 2 notebooks contenant les classes d'entraînement et d'évaluation du modèle de compréhension de langage, ainsi qu'un notebook d'analyse exploratoire du dataset
 - La classe LUISTrainer v1 crée et teste un modèle uniquement basé sur la reconnaissance d'entités, la v2 crée un modèle combinant de multiples intentions et entités
-- Le chatbot v1 a une logique minimale, la v2 a une logique conditionnelle plus poussée et la v3 enrichit le monitoring en production via Opencensus et Azure Application Insights
+- Le chatbot v1 a une logique minimale, la v2 a une logique conditionnelle plus poussée et les versions 3+ enrichissent le monitoring en production via Opencensus et Azure Application Insights
 - Une série de tests unitaires et fonctionnels a été définie dans le dossier tests
 <br><br>
 Les grandes lignes du projet sont données dans dans la présentation ppt<br><br>

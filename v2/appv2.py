@@ -21,8 +21,7 @@ import logging
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 import os
 from botbuilder.integration.applicationinsights.aiohttp import aiohttp_telemetry_middleware
-# import jinja2
-# import aiohttp_jinja2
+
 # Bot components
 CONFIG = DefaultConfig()
 SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
@@ -36,14 +35,10 @@ logger = logging.getLogger(name)
 logger.addHandler(AzureLogHandler(
         connection_string=CONFIG.INSIGHTS_CSTRING)
         )
-# Error catcher
+# Local Error catcher
 async def on_error(context: TurnContext, error: Exception):
-    # This check writes out errors to console log .vs. app insights.
-    # NOTE: In production environment, you should consider logging this to Azure
-    #       application insights.
     print(f"\n [on_turn_error] unhandled error: {error}", file=sys.stderr)
     traceback.print_exc()
-
     # Send a message to the user
     await context.send_activity("The bot encountered an error or bug.")
     await context.send_activity(

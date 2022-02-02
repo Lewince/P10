@@ -6,4 +6,4 @@
 - La classe LUISTrainer v1 crée et teste un modèle uniquement basé sur la reconnaissance d'entités, la v2 crée un modèle combinant de multiples intentions et entités
 - Complété par une série de tests unitaires et fonctionnels
 <br><br>
-Grandes lignes dans dans la présentation ppt<br><br>
+Les grandes lignes du projet sont données dans dans la présentation ppt<br><br>

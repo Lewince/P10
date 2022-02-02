@@ -5,6 +5,6 @@
 - Le dossier Models contient 2 notebooks contenant les classes d'entraînement et d'évaluation du modèle de compréhension de langage, ainsi qu'un notebook d'analyse exploratoire du dataset
 - La classe LUISTrainer v1 crée et teste un modèle uniquement basé sur la reconnaissance d'entités, la v2 crée un modèle combinant de multiples intentions et entités
 - Le chatbot v1 a une logique minimale, la v2 a une logique conditionnelle plus poussée et la v3 enrichit le monitoring en production via Opencensus et Azure Application Insights
-- Complété par une série de tests unitaires et fonctionnels définie dans le dossier tests
+- Complété par une série de tests unitaires et fonctionnels définie dans le dossier tests - l'app v2 est compatible avec le chatbot v3
 <br><br>
 Les grandes lignes du projet sont données dans dans la présentation ppt<br><br>
